@@ -80,18 +80,28 @@ namespace ImWindow
 	void ImwPlatformWindow::SetState()
 	{
 		IM_ASSERT(s_bStatePush == false);
+		IM_ASSERT(m_pContext != NULL);
 		s_bStatePush = true;
 
-		m_pPreviousContext = ImGui::GetCurrentContext();
-		ImGui::SetCurrentContext(m_pContext);
+		if (NULL != m_pContext)
+		{
+			m_pPreviousContext = ImGui::GetCurrentContext();
+			memcpy(&(m_pContext->Style), &(m_pPreviousContext->Style), sizeof(ImGuiStyle));
+			ImGui::SetCurrentContext(m_pContext);
+		}
 	}
 
 	void ImwPlatformWindow::RestoreState()
 	{
 		IM_ASSERT(s_bStatePush == true);
+		IM_ASSERT(m_pPreviousContext != NULL);
 		s_bStatePush = false;
 
-		ImGui::SetCurrentContext(m_pPreviousContext);
+		if (NULL != m_pContext && NULL != m_pPreviousContext)
+		{
+			memcpy(&(m_pPreviousContext->Style), &(m_pContext->Style), sizeof(ImGuiStyle));
+			ImGui::SetCurrentContext(m_pPreviousContext);
+		}
 	}
 
 	void ImwPlatformWindow::OnLoseFocus()
