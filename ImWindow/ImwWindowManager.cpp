@@ -607,7 +607,7 @@ namespace ImWindow
 				pAction->m_oSize = ImVec2(pWindow->GetLastSize().x, pWindow->GetLastSize().y);
 				m_lPlatformWindowActions.push_back(pAction);
 				Dock(pWindow, E_DOCK_ORIENTATION_CENTER, 0.5f, m_pDragPlatformWindow);
-				((ImGuiState*)m_pDragPlatformWindow->m_pState)->IO.MouseDown[0] = true;
+				m_pDragPlatformWindow->m_pContext->IO.MouseDown[0] = true;
 			}
 			else
 			{

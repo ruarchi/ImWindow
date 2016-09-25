@@ -11,16 +11,13 @@ namespace ImWindow
 		m_bMain = bMain;
 		m_bIsDragWindow = bIsDragWindow;
 		m_pContainer = new ImwContainer(this);
-		m_pState = NULL;
-		m_pPreviousState = NULL;
+		
+		m_pContext = NULL;
+		m_pPreviousContext = NULL;
 
 		if (bCreateState)
 		{
-			void* pTemp = ImGui::GetInternalState();
-			m_pState = ImwMalloc(ImGui::GetInternalStateSize());
-			ImGui::SetInternalState(m_pState, true);
-			ImGui::GetIO().IniFilename = NULL;
-			ImGui::SetInternalState(pTemp);
+			m_pContext = ImGui::CreateContext();
 		}
 	}
 
@@ -34,8 +31,8 @@ namespace ImWindow
 			ImGui::GetIO().Fonts = NULL;
 		}
 		ImGui::Shutdown();
-		RestoreState();
-		ImwSafeDelete(m_pState);
+		
+		ImwSafeDelete(m_pContext);
 	}
 
 	bool ImwPlatformWindow::Init(ImwPlatformWindow* /*pParent*/)
@@ -90,31 +87,28 @@ namespace ImWindow
 	{
 		IM_ASSERT(s_bStatePush == false);
 		s_bStatePush = true;
-		if (m_pState != NULL)
-		{
-			m_pPreviousState = ImGui::GetInternalState();
-			ImGui::SetInternalState(m_pState);
-			memcpy(&((ImGuiState*)m_pState)->Style, &((ImGuiState*)m_pPreviousState)->Style, sizeof(ImGuiStyle));
-		}
+
+		m_pPreviousContext = ImGui::GetCurrentContext();
+		ImGui::SetCurrentContext(m_pContext);
 	}
 
 	void ImwPlatformWindow::RestoreState()
 	{
 		IM_ASSERT(s_bStatePush == true);
 		s_bStatePush = false;
-		if (m_pState != NULL)
-		{
-			memcpy(&((ImGuiState*)m_pPreviousState)->Style, &((ImGuiState*)m_pState)->Style, sizeof(ImGuiStyle));
-			ImGui::SetInternalState(m_pPreviousState);
-		}
+
+		ImGui::SetCurrentContext(m_pPreviousContext);
 	}
 
 	void ImwPlatformWindow::OnLoseFocus()
 	{
-		if (NULL != m_pState)
+		if (NULL != m_pContext)
 		{
-			ImGuiState& g = *((ImGuiState*)m_pState);
-			g.SetNextWindowPosCond = g.SetNextWindowSizeCond = g.SetNextWindowContentSizeCond = g.SetNextWindowCollapsedCond = g.SetNextWindowFocus = 0;
+			m_pContext->SetNextWindowPosCond = 0;
+			m_pContext->SetNextWindowSizeCond = 0;
+			m_pContext->SetNextWindowContentSizeCond = 0;
+			m_pContext->SetNextWindowCollapsedCond = 0;
+			m_pContext->SetNextWindowFocus = 0;
 		}
 	}
 

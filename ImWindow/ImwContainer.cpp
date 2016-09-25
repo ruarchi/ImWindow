@@ -379,7 +379,7 @@ namespace ImWindow
 		ImGuiWindowFlags eFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_ChildWindow;
 
 		const ImVec2 oContentAvailable = ImGui::GetContentRegionAvail();
-		ImVec2 oSize = ImRound(oSizeArg);
+		ImVec2 oSize = oSizeArg;
 		if (oSize.x <= 0.0f)
 		{
 			if (oSize.x == 0.0f)

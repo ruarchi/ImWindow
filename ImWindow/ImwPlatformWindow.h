@@ -54,8 +54,8 @@ namespace ImWindow
 		bool								m_bMain;
 		bool								m_bIsDragWindow;
 		ImwContainer*						m_pContainer;
-		void*								m_pState;
-		void*								m_pPreviousState;
+		ImGuiContext*						m_pContext;
+		ImGuiContext*						m_pPreviousContext;
 	};
 
 	typedef ImwList<ImwPlatformWindow*> ImwPlatformWindowList;
