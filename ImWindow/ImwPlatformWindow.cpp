@@ -25,14 +25,8 @@ namespace ImWindow
 	{
 		ImwSafeDelete(m_pContainer);
 
-		SetState();
-		if (!IsMain())
-		{
-			ImGui::GetIO().Fonts = NULL;
-		}
-		ImGui::Shutdown();
-		
-		ImwSafeDelete(m_pContext);
+		if (NULL != m_pContext)
+			ImGui::DestroyContext(m_pContext);
 	}
 
 	bool ImwPlatformWindow::Init(ImwPlatformWindow* /*pParent*/)
